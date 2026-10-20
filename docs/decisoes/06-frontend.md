@@ -1,0 +1,78 @@
+# Decisão 6 — Frontend
+
+## O que eu considerei
+
+**React + Vite servido pelo próprio Fastify** (um serviço), **frontend separado
+com hospedagem própria** (Cloud Storage + CDN ou Firebase Hosting) e **Next.js**.
+Escolhi React + Vite + Tailwind, com o build estático servido pelo Fastify.
+
+## Por que não Next.js
+
+Já descartado na decisão 1 para o backend. Como front puro (sem API Routes),
+Next.js traria SSR, roteamento por arquivo e otimização de imagem, nada disso
+necessário numa tela única de agenda atrás de login. Vite entrega React com
+build em segundos e sem servidor Node extra para renderizar.
+
+## Por que não um frontend separado com deploy próprio
+
+"Separado" significa dois deploys: a API no Cloud Run e o front como arquivos
+estáticos num bucket do Cloud Storage atrás do Cloud CDN (ou Firebase
+Hosting), cada um com seu domínio (`api.exemplo.com` e `app.exemplo.com`).
+
+É a arquitetura padrão para produto grande: o front escala na CDN sem gastar
+instância de API, times diferentes fazem deploy independente e o cache de
+borda deixa o carregamento mais rápido no mundo todo. Para este desafio ela
+cobra três coisas que não compram nada:
+
+1. **CORS e cookie cross-site.** Com domínios diferentes o cookie de sessão
+   precisa de `SameSite=None; Secure`, o que reabre CSRF e exige token CSRF
+   ou verificação de `Origin`. E toda requisição passa por preflight CORS.
+   Mesmo domínio: `SameSite=Lax`, sem CORS, sem CSRF token.
+2. **Dois deploys, duas configurações, duas URLs** para quem for rodar.
+3. **Rodar local fica mais chato:** o `docker compose up` precisaria de um
+   container Nginx só para servir arquivos.
+
+Fica no README como evolução natural quando o front crescer ou tiver time
+próprio.
+
+## Por que React + Vite + Tailwind servido pelo Fastify
+
+1. **Um serviço, uma URL, um cookie.** O Fastify serve `GET /` e os assets de
+   `/public` com `@fastify/static`; as rotas `/api/*` e `/api/eventos` (SSE)
+   vivem no mesmo processo. O `docker compose up` sobe tudo.
+2. **Mesmo TypeScript do back.** Tipos de `Agendamento` e dos eventos SSE
+   compartilhados numa pasta `shared/`, importados pelos dois lados.
+3. **Vite** para dev com HMR (proxy para a API em `localhost:3000`) e build
+   estático em segundos. Zero runtime no servidor para o front.
+4. **Tailwind** para estilizar rápido sem arquivo CSS por componente; já é
+   minha ferramenta diária. Sem biblioteca de componentes pesada: a tela é
+   uma grade de horários e um formulário.
+5. **React** é o que eu domino; nenhum motivo para experimentar framework
+   novo num teste com prazo.
+
+## Estrutura
+
+```
+apps/
+  api/      Fastify + Postgres (serve também o build do front)
+  web/      React + Vite + Tailwind
+packages/
+  shared/   tipos compartilhados
+```
+
+Um monorepo simples com `npm workspaces`, sem Turborepo ou Nx.
+
+## Estado no cliente
+
+- Estado da agenda vem sempre do servidor: `GET /api/agenda?profissional=&data=`.
+- O `EventSource` em `/api/eventos?profissional=&data=` recebe "mudou" e o
+  cliente refaz o `GET`. Sem store global, sem cache otimista: menos lugar
+  para o estado divergir entre abas.
+- Erro de sobreposição (`409 Conflict`) vira mensagem no formulário.
+
+## Escopo de interface
+
+Uma tela de login e uma tela de agenda: seletor de profissional e data,
+colunas de horário, criar (clicar num horário vago), mover (arrastar ou editar
+horário), cancelar. Sem visão semanal, sem busca de paciente, sem tema escuro.
+
