@@ -1,4 +1,4 @@
-# Decisão 3 — Tempo real
+# Decisão 3: Tempo real
 
 ## O problema tem duas partes
 

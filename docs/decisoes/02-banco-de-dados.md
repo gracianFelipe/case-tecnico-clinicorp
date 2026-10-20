@@ -1,4 +1,4 @@
-# Decisão 2 — Banco de dados
+# Decisão 2: Banco de dados
 
 ## O que eu considerei
 

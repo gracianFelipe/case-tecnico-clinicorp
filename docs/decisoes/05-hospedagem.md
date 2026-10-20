@@ -1,4 +1,4 @@
-# Decisão 5 — Hospedagem no GCP e deploy
+# Decisão 5: Hospedagem no GCP e deploy
 
 ## O que eu considerei
 

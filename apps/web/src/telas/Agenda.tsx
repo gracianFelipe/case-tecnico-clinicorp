@@ -9,7 +9,12 @@ import { Painel, type PainelEstado } from "../componentes/Painel";
 export function Agenda({ usuario, aoSair }: { usuario: Usuario; aoSair: () => Promise<void> }) {
   const [profissionais, setProfissionais] = useState<Profissional[]>([]);
   const [profissional, setProfissional] = useState<number | null>(null);
-  const [data, setData] = useState(hojeISO());
+  const [data, setDataBruta] = useState(hojeISO());
+  const [direcao, setDirecao] = useState<1 | -1 | 0>(0);
+  const setData = (nova: string) => {
+    setDirecao(nova > data ? 1 : nova < data ? -1 : 0);
+    setDataBruta(nova);
+  };
   const [painel, setPainel] = useState<PainelEstado | null>(null);
 
   const deslogar = useCallback(() => void aoSair(), [aoSair]);
@@ -38,6 +43,7 @@ export function Agenda({ usuario, aoSair }: { usuario: Usuario; aoSair: () => Pr
       <main className="mx-auto flex w-full max-w-[1100px] min-h-0 flex-1 flex-col px-3 pb-3 pt-3 sm:px-6 sm:pb-6 sm:pt-5">
         <Grade
           data={data}
+          direcao={direcao}
           itens={agenda.itens}
           carregando={agenda.carregando}
           destaque={agenda.destaque}

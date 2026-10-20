@@ -1,4 +1,5 @@
-import { CalendarDays, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
+import { ChevronLeft, ChevronRight, LogOut } from "lucide-react";
+import { Marca } from "./Marca";
 import type { Profissional, Usuario } from "../api";
 import { hojeISO, rotuloData, somarDias } from "../datas";
 import { Digitos } from "./Digitos";
@@ -25,10 +26,15 @@ export function Cabecalho(p: Props) {
     <header
       className="glass z-20 mx-3 mt-3 flex shrink-0 flex-wrap items-center gap-2 px-3 py-2.5 sm:mx-6 sm:gap-3.5 sm:px-4.5 sm:py-3"
     >
-      <div className="mr-auto flex items-center gap-2.5 font-serif text-xl font-semibold">
-        <CalendarDays size={22} className="text-marrom" strokeWidth={2} />
-        <span className="max-sm:hidden">Agenda</span>
-      </div>
+      <button
+        type="button"
+        title="Voltar para hoje"
+        onClick={() => p.aoTrocarData(hojeISO())}
+        className="mr-auto flex cursor-pointer items-center gap-2.5 rounded-[12px] px-1 font-serif text-xl font-semibold"
+      >
+        <Marca tamanho={26} />
+        <span className="brilho max-sm:hidden">Agenda</span>
+      </button>
 
       <Seletor rotulo="Profissional" opcoes={p.profissionais} valor={p.profissional} aoMudar={p.aoTrocarProfissional} />
 

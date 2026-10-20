@@ -1,4 +1,4 @@
-# Decisão 1 — Linguagem e framework do backend
+# Decisão 1: Linguagem e framework do backend
 
 ## O que eu considerei
 

@@ -1,4 +1,4 @@
-# Decisão 4 — Autenticação
+# Decisão 4: Autenticação
 
 ## O que o desafio pede
 

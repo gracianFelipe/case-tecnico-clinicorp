@@ -1,4 +1,4 @@
-# Decisão 6 — Frontend
+# Decisão 6: Frontend
 
 ## O que eu considerei
 

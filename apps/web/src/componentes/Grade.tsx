@@ -6,6 +6,7 @@ import { ALTURA_SLOT, HORA_FIM, HORA_INICIO, MINUTOS_SLOT, duracaoLegivel, hojeI
 
 type Props = {
   data: string;
+  direcao: 1 | -1 | 0;
   itens: Agendamento[];
   carregando: boolean;
   destaque: Set<number>;
@@ -38,7 +39,7 @@ export function Grade(p: Props) {
 
   return (
     <div className="neu min-h-0 flex-1 overflow-hidden bg-branco">
-    <div ref={rolagem} aria-busy={p.carregando} className="rolagem grid h-full grid-cols-[48px_1fr] content-start gap-x-1.5 overflow-y-auto overscroll-contain py-3 pl-2 pr-2 sm:grid-cols-[64px_1fr] sm:gap-x-2 sm:py-4 sm:pl-3 sm:pr-3">
+    <div ref={rolagem} aria-busy={p.carregando} key={p.data} className={`rolagem grid h-full ${p.direcao > 0 ? "virar-frente" : p.direcao < 0 ? "virar-tras" : ""} grid-cols-[48px_1fr] content-start gap-x-1.5 overflow-y-auto overscroll-contain py-3 pl-2 pr-2 sm:grid-cols-[64px_1fr] sm:gap-x-2 sm:py-4 sm:pl-3 sm:pr-3`}>
       <div className="grid text-right text-[11px] tabular-nums text-tinta-2 sm:text-xs" style={{ gridAutoRows: ALTURA_SLOT }}>
         {slots.map((s) => <div key={s.hhmm} className="pr-2">{s.cheia ? s.hhmm : ""}</div>)}
       </div>

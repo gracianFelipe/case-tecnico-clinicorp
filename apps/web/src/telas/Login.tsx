@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
-import { ArrowRight, CalendarDays, CircleAlert } from "lucide-react";
+import { ArrowRight, CircleAlert } from "lucide-react";
+import { Marca } from "../componentes/Marca";
 import { ErroApi } from "../api";
 
 export function Login({ aoEntrar }: { aoEntrar: (email: string, senha: string) => Promise<void> }) {
@@ -31,10 +32,10 @@ export function Login({ aoEntrar }: { aoEntrar: (email: string, senha: string) =
         </div>
       </div>
       <form onSubmit={enviar} className="glass-forte relative w-full max-w-[430px] px-9 py-10">
-        <div className="neu surgir mx-auto mb-5 grid h-14 w-14 place-items-center rounded-[18px] text-marrom">
-          <CalendarDays size={26} strokeWidth={2} />
+        <div className="neu surgir mx-auto mb-5 grid h-14 w-14 place-items-center rounded-[18px]">
+          <Marca tamanho={30} />
         </div>
-        <h1 className="text-center font-serif text-3xl font-semibold tracking-tight">
+        <h1 className="brilho text-center font-serif text-3xl font-semibold tracking-tight">
           <span className="revelar"><span>Bem-vindo</span></span>
           <span className="revelar"><span>de volta.</span></span>
         </h1>

@@ -15,8 +15,8 @@
   --color-marrom-2: #a3845f;
   --color-ok: #5e8a6e;
   --color-perigo: #b5493f;
-  --font-sans: Inter, system-ui, sans-serif;
-  --font-serif: Fraunces, Georgia, serif;
+  --font-sans: Epilogue, system-ui, sans-serif;
+  --font-serif: Epilogue, system-ui, sans-serif;
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-suave: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -109,6 +109,36 @@ body::after { width: 480px; height: 480px; background: #fff; bottom: -200px; lef
   box-shadow: -5px -5px 12px var(--hi), 5px 5px 12px var(--lo);
 }
 .botao-fantasma:hover { box-shadow: -2px -2px 6px var(--hi), 2px 2px 6px var(--lo); }
+
+.brilho {
+  background: linear-gradient(110deg, currentColor 0%, currentColor 40%, #c9b79f 50%, currentColor 60%, currentColor 100%);
+  background-size: 240% 100%;
+  background-position: 120% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: brilho 20s linear infinite;
+}
+.brilho:hover { animation: brilho-rapido 1.2s var(--ease-suave) 1; }
+@keyframes brilho {
+  0% { background-position: 120% 0; }
+  4% { background-position: -120% 0; }
+  4.01% { background-position: 120% 0; }
+  12% { background-position: -120% 0; }
+  12.01%, 100% { background-position: 120% 0; }
+}
+@keyframes brilho-rapido { 0% { background-position: 120% 0; } 100% { background-position: -120% 0; } }
+
+.virar-frente { animation: virar-frente 0.32s var(--ease-suave) both; }
+.virar-tras { animation: virar-tras 0.32s var(--ease-suave) both; }
+@keyframes virar-frente {
+  from { opacity: 0; transform: translateX(28px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes virar-tras {
+  from { opacity: 0; transform: translateX(-28px); }
+  to { opacity: 1; transform: none; }
+}
 
 .revelar { overflow: hidden; display: block; }
 .revelar > span { display: block; transform: translateY(110%); animation: subir 0.8s var(--ease-spring) forwards; }
