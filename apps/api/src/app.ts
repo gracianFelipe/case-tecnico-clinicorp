@@ -1,4 +1,7 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
 import Fastify, { type FastifyError } from "fastify";
+import fastifyStatic from "@fastify/static";
 import type { Sql } from "./db.js";
 import { ErroHttp } from "./erros.js";
 import pluginAuth from "./plugins/auth.js";
@@ -11,6 +14,7 @@ export type Dependencias = {
   sql: Sql;
   cookieSeguro: boolean;
   fuso: string;
+  webDir?: string | undefined;
 };
 
 export async function construirApp(deps: Dependencias) {
@@ -41,6 +45,14 @@ export async function construirApp(deps: Dependencias) {
   await barramento.iniciar();
   app.addHook("onClose", () => barramento.parar());
   await app.register(rotasEventos, { barramento });
+
+  if (deps.webDir && existsSync(path.join(deps.webDir, "index.html"))) {
+    await app.register(fastifyStatic, { root: deps.webDir, wildcard: false });
+    app.setNotFoundHandler((req, reply) => {
+      if (req.method === "GET" && !req.url.startsWith("/api/")) return reply.sendFile("index.html");
+      return reply.code(404).send({ erro: "rota não encontrada" });
+    });
+  }
 
   return app;
 }
