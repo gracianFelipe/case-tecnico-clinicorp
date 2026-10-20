@@ -15,7 +15,7 @@ Considerei três caminhos: **sessão própria com cookie**, **JWT próprio** e
 ## Como cada opção funciona
 
 **Sessão própria (stateful).** `POST /login` compara a senha com o hash
-(argon2id) no banco, gera um ID aleatório de 32 bytes, grava
+(scrypt) no banco, gera um ID aleatório de 32 bytes, grava
 `sessoes(id_hash, usuario_id, expira_em)` e devolve o ID num cookie
 `HttpOnly; Secure; SameSite=Lax`. A cada requisição o navegador manda o cookie
 sozinho; o servidor busca a sessão e sabe quem é. Logout apaga a linha.
@@ -68,7 +68,7 @@ porque a sessão continua sendo minha.
 1. **SSE funciona de graça:** `EventSource` manda cookies.
 2. **Revogação imediata** em todas as abas.
 3. **Zero dependência externa**, custo zero, nada para configurar no GCP.
-4. **Mostra fundamento.** Hash com argon2id; ID de sessão aleatório guardado
+4. **Mostra fundamento.** Hash com scrypt; ID de sessão aleatório guardado
    como **hash** (se o banco vazar, as sessões não vazam); cookie `__Host-`
    em HTTPS; `SameSite=Lax` (bloqueia CSRF em POST cross-site sem precisar de
    token CSRF); expiração deslizante; limite de tentativas no login.

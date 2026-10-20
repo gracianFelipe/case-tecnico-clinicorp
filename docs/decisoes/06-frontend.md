@@ -17,8 +17,8 @@ build em segundos e sem servidor Node extra para renderizar.
 
 ## Por que não um frontend separado com deploy próprio
 
-"Separado" significa dois deploys: a API no Cloud Run e o front como arquivos
-estáticos num bucket do Cloud Storage atrás do Cloud CDN (ou Firebase
+"Separado" significa dois deploys: a API num serviço de container e o front como arquivos
+estáticos num bucket atrás de uma CDN (Cloud Storage + Cloud CDN, Firebase
 Hosting), cada um com seu domínio (`api.exemplo.com` e `app.exemplo.com`).
 
 É a arquitetura padrão para produto grande: o front escala na CDN sem gastar
