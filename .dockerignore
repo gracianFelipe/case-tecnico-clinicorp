@@ -1,0 +1,12 @@
+node_modules
+**/node_modules
+**/dist
+**/.env
+.git
+.env
+.env.*
+!.env.example
+estudo
+docs
+.claude
+*.md

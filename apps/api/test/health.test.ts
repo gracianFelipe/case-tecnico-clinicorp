@@ -7,7 +7,7 @@ describe("GET /api/health", () => {
   const sql = conectarBancoDeTeste();
 
   beforeAll(async () => {
-    app = await construirApp({ sql });
+    app = await construirApp({ sql, cookieSeguro: false, fuso: "America/Sao_Paulo" });
   });
   afterAll(async () => {
     await app.close();

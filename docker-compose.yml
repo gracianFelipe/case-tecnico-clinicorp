@@ -19,5 +19,19 @@ services:
       timeout: 3s
       retries: 10
 
+  api:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://agenda:agenda@db:5432/agenda
+      PORT: "3000"
+      FUSO_HORARIO: America/Sao_Paulo
+      NODE_ENV: development
+    ports:
+      - "127.0.0.1:3000:3000"
+
 volumes:
   db-data:

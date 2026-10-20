@@ -1,11 +1,11 @@
-import { config } from "./config.js";
+import { config, emProducao } from "./config.js";
 import { sql } from "./db.js";
 import { migrar } from "./migrar.js";
 import { construirApp } from "./app.js";
 
 await migrar(sql);
 
-const app = await construirApp({ sql });
+const app = await construirApp({ sql, cookieSeguro: emProducao, fuso: config.fuso });
 
 try {
   await app.listen({ port: config.port, host: config.host });

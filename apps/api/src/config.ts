@@ -1,5 +1,3 @@
-import { fileURLToPath } from "node:url";
-
 function obrigatoria(nome: string): string {
   const valor = process.env[nome];
   if (!valor) throw new Error(`Variável de ambiente obrigatória ausente: ${nome}`);
@@ -16,7 +14,6 @@ export const config = {
   databaseUrl: obrigatoria("DATABASE_URL"),
   ambiente: opcional("NODE_ENV", "development"),
   fuso: opcional("FUSO_HORARIO", "America/Sao_Paulo"),
-  webDir: opcional("WEB_DIR", fileURLToPath(new URL("../../web/dist", import.meta.url))),
 } as const;
 
 export const emProducao = config.ambiente === "production";
