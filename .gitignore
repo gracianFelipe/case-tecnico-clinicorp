@@ -1,0 +1,29 @@
+# Dependências e build
+node_modules/
+dist/
+coverage/
+
+# Ambiente e segredos
+.env
+.env.*
+!.env.example
+
+# Dados locais
+data/
+*.db
+*.sqlite
+logs/
+
+# Ferramentas do editor/assistente (não fazem parte da entrega)
+.claude/
+AGENTS.md
+claude.md
+CLAUDE.md
+docs/checklist-seguranca.md
+
+# SO
+.DS_Store
+Thumbs.db
+
+# Material de estudo pessoal
+estudo/
