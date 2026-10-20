@@ -1,4 +1,4 @@
-# Decisão 2 — Banco de dados
+# Decisão 2: Banco de dados
 
 > Texto de estudo. A versão resumida vai para o README na seção "Decisões".
 

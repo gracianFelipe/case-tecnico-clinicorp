@@ -1,4 +1,4 @@
-# Decisão 1 — Linguagem e framework do backend
+# Decisão 1: Linguagem e framework do backend
 
 > Texto de estudo. A versão resumida vai para o README na seção "Decisões".
 

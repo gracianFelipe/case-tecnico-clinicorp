@@ -1,4 +1,4 @@
-# Decisão 3 — Tempo real
+# Decisão 3: Tempo real
 
 > Texto de estudo. A versão resumida vai para o README na seção "Decisões".
 

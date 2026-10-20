@@ -1,4 +1,4 @@
-# Decisão 6 — Frontend
+# Decisão 6: Frontend
 
 > Texto de estudo. A versão resumida vai para o README na seção "Decisões".
 

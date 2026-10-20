@@ -1,4 +1,4 @@
-# Decisão 4 — Autenticação
+# Decisão 4: Autenticação
 
 > Texto de estudo. A versão resumida vai para o README na seção "Decisões".
 

@@ -1,4 +1,4 @@
-# Decisão 5 — Hospedagem no GCP e deploy
+# Decisão 5: Hospedagem no GCP e deploy
 
 > Texto de estudo. A versão resumida vai para o README na seção "Decisões".
 
