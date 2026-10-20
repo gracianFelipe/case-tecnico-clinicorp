@@ -5,7 +5,13 @@ import { construirApp } from "./app.js";
 
 await migrar(sql);
 
-const app = await construirApp({ sql, cookieSeguro: emProducao, fuso: config.fuso, webDir: config.webDir });
+const app = await construirApp({
+  sql,
+  cookieSeguro: emProducao,
+  fuso: config.fuso,
+  webDir: config.webDir,
+  proxies: config.proxies,
+});
 
 try {
   await app.listen({ port: config.port, host: config.host });

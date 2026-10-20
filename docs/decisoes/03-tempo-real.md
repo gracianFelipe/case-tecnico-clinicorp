@@ -9,7 +9,7 @@ segundos sem recarregar. Isso envolve dois problemas independentes:
 
 1. **Servidor → navegador:** como o servidor empurra a novidade para a aba B?
    Candidatos: WebSocket, SSE (Server-Sent Events), polling.
-2. **Instância → instância:** no Cloud Run podem existir várias cópias do
+2. **Instância → instância:** em produção podem existir várias cópias do
    servidor. Se a aba A está conectada à instância 1 e a aba B à instância 2,
    a instância 1 não conhece a aba B. Candidatos: Postgres `LISTEN/NOTIFY`,
    Cloud Pub/Sub, Redis.
@@ -33,14 +33,14 @@ Vantagens concretas do SSE para este caso:
 
 - **Reconexão automática.** O `EventSource` do navegador reconecta sozinho e
   envia `Last-Event-ID`. Com WebSocket a reconexão é código meu.
-- **É HTTP puro.** Passa por qualquer proxy, CDN e pelo Cloud Run sem
+- **É HTTP puro.** Passa por qualquer proxy, CDN e pelo proxy da hospedagem sem
   configuração de `Upgrade`. No Fastify é uma rota comum que escreve em
   `reply.raw` e não fecha; nenhuma biblioteca.
 - **Mais simples de ler e de defender.** Menos superfície para bug.
 
 Limitação conhecida: em HTTP/1.1 o navegador limita ~6 conexões por domínio,
 então 6+ abas da mesma agenda no mesmo navegador travariam. Irrelevante para
-2-3 abas e resolvido por HTTP/2, que o Cloud Run já serve.
+2-3 abas e resolvido por HTTP/2, que a hospedagem já serve.
 
 WebSocket seria a escolha se o cliente mandasse muita mensagem (chat, edição
 colaborativa, jogo).
