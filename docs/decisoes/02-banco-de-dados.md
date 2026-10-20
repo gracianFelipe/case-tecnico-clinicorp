@@ -46,8 +46,9 @@ infra" com um `docker compose up`.
    `periodo` é um `tstzrange`. O banco garante que nunca existem dois
    intervalos sobrepostos para o mesmo profissional, mesmo com dezenas de
    requisições simultâneas em instâncias diferentes do servidor. A aplicação
-   ainda valida antes, para dar mensagem amigável, mas a garantia final é do
-   banco, que é o único ponto que enxerga todas as transações ao mesmo tempo.
+   não checa antes: ela grava e, se o banco recusar (`exclusion_violation`),
+   traduz o erro em `409 Conflict`. Checar antes seria redundante, porque o
+   banco é o único ponto que enxerga todas as transações ao mesmo tempo.
 2. **Concorrência resolvida pelo banco.** Validar só na aplicação
    (`SELECT` para checar conflito, depois `INSERT`) tem uma janela entre as
    duas operações em que outra requisição pode inserir. É a condição de
