@@ -31,8 +31,8 @@ de duas vias para usar uma só.
 
 Vantagens concretas do SSE para este caso:
 
-- **Reconexão automática.** O `EventSource` do navegador reconecta sozinho e
-  envia `Last-Event-ID`. Com WebSocket a reconexão é código meu.
+- **Reconexão automática.** O `EventSource` do navegador reconecta sozinho
+  (o servidor manda `retry: 2000`). Com WebSocket a reconexão é código meu.
 - **É HTTP puro.** Passa por qualquer proxy, CDN e pelo proxy da hospedagem sem
   configuração de `Upgrade`. No Fastify é uma rota comum que escreve em
   `reply.raw` e não fecha; nenhuma biblioteca.

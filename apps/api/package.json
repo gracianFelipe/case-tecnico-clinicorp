@@ -3,13 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx --env-file-if-exists=../../.env watch src/server.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "migrar": "tsx src/cli-migrar.ts",
-    "seed": "tsx src/cli-seed.ts"
+    "migrar": "tsx --env-file-if-exists=../../.env src/cli-migrar.ts",
+    "seed": "tsx --env-file-if-exists=../../.env src/cli-seed.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^11.1.3",
