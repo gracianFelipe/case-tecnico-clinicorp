@@ -3,7 +3,7 @@
 ## O que eu considerei
 
 Três caminhos: **Firestore**, **SQLite local + Postgres em produção** e
-**PostgreSQL** nos dois ambientes (Docker local, Cloud SQL em produção).
+**PostgreSQL** nos dois ambientes (Docker local, Neon em produção).
 Escolhi PostgreSQL.
 
 ## Por que não Firestore
@@ -56,28 +56,19 @@ infra" com um `docker compose up`.
 4. **É o que eu uso em produção.** Sei onde os problemas aparecem (pool de
    conexões, migrações, índices).
 
-## Hospedagem do banco: Cloud SQL
+## Hospedagem do banco: Neon
 
-Em produção o banco roda no **Cloud SQL para PostgreSQL**, na menor instância,
-porque é o serviço gerenciado de Postgres do GCP e é o que eu defenderia num
-projeto real: backup automático, patch de versão, alta disponibilidade opcional.
+Em produção o banco roda no **Neon**, PostgreSQL serverless no plano
+gratuito. O plano era o Cloud SQL, mas o GCP exigiu pré-pagamento para ativar
+o faturamento (detalhes na decisão 5).
 
-Pontos de custo e operação:
-
-- Cloud SQL não tem free tier nem escala a zero. A menor instância
-  (`db-f1-micro`) custa na faixa de US$ 7–10/mês; para o período do teste o
-  custo é de poucos reais, e a instância pode ser **parada** quando não estiver
-  em uso. Crédito de boas-vindas de conta nova cobre o teste inteiro.
-- Alerta de orçamento criado **antes** de qualquer recurso.
-- **Conexão a partir do Cloud Run não precisa de VPC connector.** O Cloud Run
-  monta um socket Unix em `/cloudsql/<projeto>:<regiao>:<instancia>` quando o
-  serviço é implantado com `--add-cloudsql-instances`. A conexão passa pelo
-  Cloud SQL Auth Proxy embutido, com IP público na instância e TLS, sem
-  configurar rede. VPC connector (ou Direct VPC egress) só seria necessário
-  para IP privado, que é a opção mais segura em produção de verdade e fica
-  anotada como "o que eu faria depois".
-- Senha do banco e segredo de sessão ficam no **Secret Manager**, montados
-  como variáveis de ambiente no Cloud Run.
+- É Postgres 16 de verdade: `btree_gist`, `EXCLUDE` e `LISTEN/NOTIFY`
+  funcionam sem mudança.
+- O app usa a **conexão direta**, não a do pooler: `LISTEN` precisa de uma
+  sessão fixa, e o PgBouncer em modo transação troca a conexão a cada
+  transação.
+- TLS obrigatório (`sslmode=require`).
+- A `DATABASE_URL` fica só nas variáveis de ambiente do Render.
 
 ## Local: Docker Compose
 

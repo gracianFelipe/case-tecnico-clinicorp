@@ -15,6 +15,7 @@ export type Dependencias = {
   cookieSeguro: boolean;
   fuso: string;
   webDir?: string | undefined;
+  proxies?: number;
 };
 
 export async function construirApp(deps: Dependencias) {
@@ -24,6 +25,7 @@ export async function construirApp(deps: Dependencias) {
       redact: ["req.headers.cookie", "req.headers.authorization"],
     },
     ajv: { customOptions: { allErrors: false } },
+    trustProxy: (_ip: string, salto: number) => salto < (deps.proxies ?? 0),
   });
 
   app.setErrorHandler((erro: FastifyError | ErroHttp, req, reply) => {

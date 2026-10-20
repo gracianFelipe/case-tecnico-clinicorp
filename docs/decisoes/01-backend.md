@@ -59,10 +59,9 @@ motivos práticos:
 2. **Conexões longas são naturais no Node.** O event loop foi feito para manter
    milhares de sockets abertos com pouco custo. WebSocket e SSE são triviais de
    servir a partir do mesmo processo HTTP.
-3. **Encaixa no Cloud Run.** Um container Node com um servidor HTTP é o caso de
-   uso mais comum do Cloud Run, que escala a zero quando ninguém usa (custo
-   baixo para uma conta pessoal) e suporta WebSocket com timeout de requisição
-   configurável.
+3. **Encaixa em qualquer plataforma de container.** Um container Node com um
+   servidor HTTP é o caso mais comum de Render, Cloud Run e afins, que escalam
+   a zero quando ninguém usa e aceitam conexões longas.
 4. **Tipos compartilhados.** O front (React + Vite) e o back falam o mesmo
    TypeScript, então o contrato da API vive no código, não só na documentação.
 
