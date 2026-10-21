@@ -107,3 +107,8 @@ ordem, duplicata e payload: o front sempre busca o estado atual do banco.
 - Em dev, com uma só instância, o fluxo é idêntico; `LISTEN/NOTIFY` já é
   usado desde o início, então não existe "código só de produção".
 
+## O que eu faria depois
+
+- Pub/Sub quando outros sistemas precisarem do mesmo evento (lembrete por
+  WhatsApp, faturamento, relatórios).
+- Padrão outbox se a entrega do evento precisar ser garantida.

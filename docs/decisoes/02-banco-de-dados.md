@@ -78,3 +78,8 @@ inicialização. Os testes de integração usam um banco descartável
 (`agenda_test`) e falham se a `DATABASE_URL` apontar para outro nome, para
 ninguém truncar o banco de desenvolvimento por acidente.
 
+## O que eu faria depois
+
+- IP privado e rede interna entre app e banco, em vez de conexão pela
+  internet com TLS.
+- Réplica de leitura se a consulta da agenda virar gargalo.

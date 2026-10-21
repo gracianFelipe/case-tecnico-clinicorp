@@ -58,10 +58,19 @@ segredo no repositório ou na imagem.
 ## Proxy e IP do cliente
 
 Atrás do proxy do Render, o IP que chega no socket é o do proxy. O limite
-de tentativas de login usa o IP para contar, então o app precisa ler o
-`X-Forwarded-For`. `PROXIES_CONFIAVEIS` diz quantos saltos de proxy são
-confiáveis; confiar em todos deixaria qualquer cliente forjar o cabeçalho e
-escapar do limite. Local fica 0.
+de tentativas de login conta por IP, então precisa do IP real de quem acessa.
+
+A primeira versão confiava em um salto do `X-Forwarded-For`
+(`PROXIES_CONFIAVEIS=1`). Testando em produção, as tentativas de um mesmo
+cliente caíam em contadores diferentes: na frente do Render há a Cloudflare,
+e o IP que sobrava era o de servidores intermediários que mudam a cada
+requisição. O limite ficava diluído.
+
+A correção usa o cabeçalho `CF-Connecting-IP`, que a Cloudflare preenche com
+o IP do cliente e sobrescreve se o cliente tentar mandar o seu. O nome do
+cabeçalho vem de `CABECALHO_IP_CLIENTE`; sem ele (local e testes), o limite
+usa o IP do socket. `PROXIES_CONFIAVEIS` continua só para o IP que aparece
+nos logs.
 
 ## Como seria no GCP
 

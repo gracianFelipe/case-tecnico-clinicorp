@@ -103,4 +103,3 @@ ativas em memória; em serverless cada invocação é um processo isolado, entã
 essa lista não existe sem um serviço externo intermediando. Um servidor Node
 rodando direto resolve os dois problemas de graça: o processo é persistente e
 a lista de clientes é uma variável em memória.
-

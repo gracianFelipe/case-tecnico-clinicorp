@@ -1,7 +1,7 @@
 # Agenda da clínica
 
-Agenda de um consultório com atualização em tempo real: duas abas abertas na
-mesma agenda se sincronizam em poucos segundos, sem F5.
+Agenda de um consultório com atualização em tempo real: o que muda numa aba
+aparece nas outras em poucos segundos, sem recarregar a página.
 
 **No ar:** https://agenda-clinicorp.onrender.com
 
@@ -19,11 +19,11 @@ As contas e três profissionais são criados pelo seed. Não há tela de cadastr
 
 ## O que o sistema faz
 
-1. **Login** com sessão que sobrevive ao F5 (cookie HttpOnly).
+1. **Login** com sessão que sobrevive ao recarregamento da página (cookie HttpOnly).
 2. **Agenda do dia** de um profissional, com navegação por data.
-3. **Criar, mover e cancelar** agendamentos. Mover é editar o horário.
+3. **Criar, mover (mudar o horário) e cancelar** agendamentos.
 4. **Sem sobreposição:** o mesmo profissional não pode ter dois horários que
-   se cruzam. Quem garante é o banco, não só a tela.
+   se cruzam.
 5. **Tempo real:** o que muda numa aba aparece nas outras em poucos segundos.
 
 ## Como rodar localmente
@@ -38,12 +38,12 @@ docker compose exec api node apps/api/dist/cli-seed.js
 ```
 
 Abra http://localhost:3000 e entre com uma das contas acima. Para ver o tempo
-real, abra a mesma agenda em duas abas (ou em dois navegadores, um com cada
-conta) e crie, mova ou cancele um agendamento.
+real, abra a mesma agenda em duas abas e crie, mova ou cancele um agendamento.
 
-### Desenvolvimento sem Docker para o app
+### Para desenvolver
 
-Requisito: Node 22.12 ou mais novo. O banco continua no Docker.
+Para mexer no código com recarga automática, o banco continua no Docker e o
+app roda no Node da máquina (22.12 ou mais novo):
 
 ```bash
 cp .env.example .env
@@ -52,17 +52,33 @@ npm install
 npm run migrar --workspace apps/api
 npm run seed --workspace apps/api
 npm run dev --workspace apps/api     # API em http://localhost:3000
-npm run dev --workspace apps/web     # front com HMR em http://localhost:5173
+npm run dev --workspace apps/web     # front em http://localhost:5173
 ```
 
 ### Testes
 
-São 30 testes de integração contra um Postgres real, no banco `agenda_test`
-que o compose cria. Cobrem login e sessão, as regras da agenda, a
-sobreposição (incluindo 10 inserções simultâneas no mesmo horário) e o SSE.
+**API:** 31 testes de integração contra um Postgres real, no banco
+`agenda_test` que o compose cria. Cobrem login e sessão (incluindo o limite
+de tentativas), as regras da agenda, a sobreposição (incluindo 10 inserções
+simultâneas no mesmo horário) e o tempo real.
+
+**Front:** 12 testes de componentes (Testing Library) para o login, o
+seletor de hora com horários ocupados riscados e o painel de agendamento,
+incluindo a mensagem quando o servidor recusa o horário.
 
 ```bash
-npm test --workspace apps/api
+npm test
+```
+
+**Ponta a ponta:** 2 testes com Playwright num navegador real, contra o app
+do `docker compose` em http://localhost:3000. Um confere que a sessão
+sobrevive ao recarregamento. O outro abre duas abas: cria um agendamento na
+primeira, espera ele aparecer na segunda sem recarregar, tenta salvar o mesmo
+horário na segunda e confere a recusa.
+
+```bash
+npm --workspace apps/web exec -- playwright install chromium
+npm run test:e2e --workspace apps/web
 ```
 
 ## Stack
@@ -74,37 +90,45 @@ npm test --workspace apps/api
 
 ## Decisões
 
-O detalhe de cada uma, com as alternativas consideradas, está em
-[`docs/decisoes/`](docs/decisoes/).
+Cada item tem um documento com o raciocínio completo e as alternativas
+consideradas, na pasta [`docs/decisoes/`](docs/decisoes/).
 
-1. **Fastify + TypeScript.** Conexões longas (SSE) são naturais no Node, e o
-   front e o back falam a mesma linguagem.
-2. **PostgreSQL com a regra de sobreposição no banco.** Uma constraint
-   `EXCLUDE USING gist` sobre o intervalo `[inicio, fim)` recusa dois
-   agendamentos que se cruzam para o mesmo profissional. Checar só no código
-   (SELECT e depois INSERT) falha quando duas requisições chegam juntas; a
-   constraint não. A API grava direto e traduz a recusa do banco em
+1. **[Fastify + TypeScript](docs/decisoes/01-backend.md).** Conexões longas
+   (SSE) são naturais no Node, e o front e o back falam a mesma linguagem.
+2. **[PostgreSQL com a regra de sobreposição no banco](docs/decisoes/02-banco-de-dados.md).**
+   Uma constraint `EXCLUDE USING gist` sobre o intervalo `[inicio, fim)`
+   recusa dois agendamentos que se cruzam para o mesmo profissional. Checar
+   só no código (SELECT e depois INSERT) falha quando duas requisições chegam
+   juntas; a constraint não. A API grava direto e traduz a recusa do banco em
    `409 Conflict`. Cancelar é soft delete, e a constraint ignora os
    cancelados.
-3. **Tempo real com SSE + LISTEN/NOTIFY.** O servidor só empurra dados para o
-   navegador, então SSE basta: é HTTP comum e reconecta sozinho. O NOTIFY sai
-   de dentro da transação, então só avisa o que foi gravado de fato, e
-   funciona com várias instâncias da API sem serviço extra. O evento diz só
-   "mudou" e a tela busca a agenda de novo.
-4. **Sessão própria em cookie.** Cookie HttpOnly, Secure e SameSite=Lax; no
-   banco fica só o hash do token. Senha com scrypt. Limite de tentativas no
-   login.
-5. **Hospedagem: Render + Neon.** O plano era o GCP (Cloud Run + Cloud SQL).
-   Para ativar o faturamento numa conta brasileira o Google exigiu um
-   pré-pagamento, e a regra deste teste era custo zero. Troquei por
-   dois serviços gratuitos sem cartão. O código não mudou: o mesmo Dockerfile
-   e a mesma `DATABASE_URL`. O plano GCP continua descrito na decisão 5.
-6. **Front servido pela API.** Um domínio só: sem CORS e com o cookie
-   SameSite=Lax funcionando sem token CSRF.
+3. **[Tempo real com SSE + LISTEN/NOTIFY](docs/decisoes/03-tempo-real.md).**
+   O servidor só empurra dados para o navegador, então SSE basta: é HTTP
+   comum e reconecta sozinho. O NOTIFY sai de dentro da transação, então só
+   avisa o que foi gravado de fato, e funciona com várias instâncias da API
+   sem serviço extra. O evento diz só "mudou" e a tela busca a agenda de novo.
+4. **[Sessão própria em cookie](docs/decisoes/04-autenticacao.md).** Cookie
+   HttpOnly, Secure e SameSite=Lax; no banco fica só o hash do token. Senha
+   com scrypt. Limite de 10 tentativas de login por minuto para cada IP.
+5. **[Hospedagem: Render + Neon](docs/decisoes/05-hospedagem.md).** O plano
+   era o GCP (Cloud Run + Cloud SQL). Porém, para ativar o faturamento numa
+   conta brasileira, o Google exigiu um pré-pagamento, então troquei por dois
+   serviços gratuitos. O código não mudou: o mesmo Dockerfile e a mesma
+   `DATABASE_URL`.
+6. **[Front servido pela API](docs/decisoes/06-frontend.md).** Um domínio só:
+   sem CORS e com o cookie SameSite=Lax funcionando sem token CSRF.
 
 ## O que ficou de fora
 
+- **Deploy no GCP.** O plano (Cloud Run, Cloud SQL, Secret Manager e GitHub
+  Actions com Workload Identity Federation) está na decisão de hospedagem,
+  pronto para usar.
+- **Mover arrastando na grade.** Hoje mover é editar o horário no painel do
+  agendamento.
 - **Cadastro pela tela** de usuários e profissionais. Hoje vêm do seed.
 - **Papéis e permissões.** Recepção e admin enxergam e fazem o mesmo.
-- **Testes do front e de ponta a ponta** (Playwright). Os testes cobrem a API.
-- **Deploy no GCP**, pelo motivo da decisão 5.
+- **Visão semanal da agenda.** Hoje a agenda mostra um dia por vez.
+- **Login gerenciado** (Google ou Microsoft) com 2FA e reset de senha.
+
+Cada documento em `docs/decisoes/` termina com uma seção "O que eu faria
+depois", com as evoluções de cada área.
