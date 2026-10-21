@@ -135,6 +135,7 @@ consideradas, na pasta [`docs/decisoes/`](docs/decisoes/).
 - **Papéis e permissões.** Recepção e admin enxergam e fazem o mesmo.
 - **Visão semanal da agenda.** Hoje a agenda mostra um dia por vez.
 - **Login gerenciado** (Google ou Microsoft) com 2FA e reset de senha.
+- **Dias com agendamento marcados no calendário**, para achar os dias com movimento sem abrir um por um.
 
 Cada documento em `docs/decisoes/` termina com uma seção "O que eu faria
 depois", com as evoluções de cada área.
