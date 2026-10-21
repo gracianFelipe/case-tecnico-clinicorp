@@ -40,6 +40,17 @@ const schemaDia = {
   },
 } as const;
 
+const schemaProximos = {
+  querystring: {
+    type: "object",
+    required: ["profissional"],
+    properties: {
+      profissional: { type: "integer", minimum: 1 },
+      limite: { type: "integer", minimum: 1, maximum: 20, default: 5 },
+    },
+  },
+} as const;
+
 type Id = { id: number };
 type Horario = { inicio: string; fim: string };
 
@@ -59,6 +70,10 @@ export default async function rotasAgenda(app: FastifyInstance, { sql, fuso }: {
   app.get<{ Querystring: { profissional: number; data: string } }>(
     "/api/agenda", { schema: schemaDia },
     async (req) => servico.listarDia(req.query.profissional, req.query.data),
+  );
+  app.get<{ Querystring: { profissional: number; limite: number } }>(
+    "/api/agenda/proximos", { schema: schemaProximos },
+    async (req) => servico.proximos(req.query.profissional, req.query.limite),
   );
 
   app.post<{ Body: NovoAgendamento }>("/api/agendamentos", { schema: schemaNovo }, async (req, reply) => {

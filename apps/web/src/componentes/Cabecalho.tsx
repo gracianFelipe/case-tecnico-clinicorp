@@ -1,16 +1,18 @@
 import { ChevronLeft, ChevronRight, LogOut } from "lucide-react";
 import { Marca } from "./Marca";
-import type { Profissional, Usuario } from "../api";
+import type { Agendamento, Profissional, Usuario } from "../api";
 import { hojeISO, rotuloData, somarDias } from "../datas";
 import { Digitos } from "./Digitos";
 import { Seletor } from "./Seletor";
 import { Calendario } from "./Calendario";
+import { Proximos } from "./Proximos";
 
 type Props = {
   usuario: Usuario;
   profissionais: Profissional[];
   profissional: number | null;
   aoTrocarProfissional: (id: number) => void;
+  aoIrParaAgendamento: (item: Agendamento) => void;
   data: string;
   aoTrocarData: (iso: string) => void;
   aoSair: () => void;
@@ -36,7 +38,10 @@ export function Cabecalho(p: Props) {
         <span className="brilho max-sm:hidden">Agenda</span>
       </button>
 
-      <Seletor rotulo="Profissional" opcoes={p.profissionais} valor={p.profissional} aoMudar={p.aoTrocarProfissional} />
+      <div className="flex items-center gap-1.5">
+        <Seletor rotulo="Profissional" opcoes={p.profissionais} valor={p.profissional} aoMudar={p.aoTrocarProfissional} />
+        <Proximos profissional={p.profissional} aoEscolher={p.aoIrParaAgendamento} />
+      </div>
 
       <div className="neu flex items-center gap-0.5 rounded-[14px] p-1 font-semibold text-cinza-3 max-sm:order-last max-sm:w-full max-sm:justify-between sm:p-1.5">
         <button type="button" aria-label="Dia anterior" className="rounded-[10px] px-3 py-2 hover:bg-fundo-2" onClick={() => p.aoTrocarData(somarDias(p.data, -1))}>

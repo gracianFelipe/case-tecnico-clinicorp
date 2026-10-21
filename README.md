@@ -26,6 +26,10 @@ As contas e três profissionais são criados pelo seed. Não há tela de cadastr
    se cruzam.
 5. **Tempo real:** o que muda numa aba aparece nas outras em poucos segundos.
 
+Além dos requisitos, a seta ao lado do nome do profissional mostra, ao passar
+o mouse, os próximos cinco agendamentos dele. Clicar em um abre o dia e o
+agendamento.
+
 ## Como rodar localmente
 
 Requisito: Docker.
@@ -57,14 +61,15 @@ npm run dev --workspace apps/web     # front em http://localhost:5173
 
 ### Testes
 
-**API:** 31 testes de integração contra um Postgres real, no banco
+**API:** 32 testes de integração contra um Postgres real, no banco
 `agenda_test` que o compose cria. Cobrem login e sessão (incluindo o limite
 de tentativas), as regras da agenda, a sobreposição (incluindo 10 inserções
 simultâneas no mesmo horário) e o tempo real.
 
-**Front:** 12 testes de componentes (Testing Library) para o login, o
-seletor de hora com horários ocupados riscados e o painel de agendamento,
-incluindo a mensagem quando o servidor recusa o horário.
+**Front:** 15 testes de componentes (Testing Library) para o login, o
+seletor de hora com horários ocupados riscados, o painel de agendamento,
+incluindo a mensagem quando o servidor recusa o horário, e a lista de
+próximos agendamentos.
 
 ```bash
 npm test
@@ -73,8 +78,9 @@ npm test
 **Ponta a ponta:** 2 testes com Playwright num navegador real, contra o app
 do `docker compose` em http://localhost:3000. Um confere que a sessão
 sobrevive ao recarregamento. O outro abre duas abas: cria um agendamento na
-primeira, espera ele aparecer na segunda sem recarregar, tenta salvar o mesmo
-horário na segunda e confere a recusa.
+primeira, espera ele aparecer na segunda sem recarregar, abre-o pela lista de
+próximos agendamentos, tenta salvar o mesmo horário na segunda e confere a
+recusa.
 
 ```bash
 npm --workspace apps/web exec -- playwright install chromium

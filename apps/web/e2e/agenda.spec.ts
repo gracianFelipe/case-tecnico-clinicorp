@@ -48,6 +48,12 @@ test.describe("agenda em duas abas", () => {
     await expect(abaA.getByRole("button", { name: `${PACIENTE}, 18:30 às 19:00` })).toBeVisible();
     await expect(abaB.getByRole("button", { name: `${PACIENTE}, 18:30 às 19:00` })).toBeVisible({ timeout: 5_000 });
 
+    await abaA.getByRole("button", { name: "Próximos agendamentos" }).hover();
+    await abaA.getByRole("listitem", { name: new RegExp(`18:30.*${PACIENTE}`) }).click();
+    await expect(abaA.getByRole("dialog")).toContainText("Editar agendamento");
+    await expect(abaA.getByRole("textbox", { name: "Paciente" })).toHaveValue(PACIENTE);
+    await abaA.getByRole("button", { name: "Fechar" }).click();
+
     await abaB.getByRole("button", { name: "Salvar" }).click();
     await expect(abaB.getByRole("alert")).toContainText("já tem um agendamento nesse horário");
     await abaB.getByRole("button", { name: "Fechar" }).click();
