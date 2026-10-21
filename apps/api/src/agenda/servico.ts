@@ -47,6 +47,18 @@ export class ServicoAgenda {
     return linhas.map(paraJson);
   }
 
+  async proximos(profissionalId: number, limite: number): Promise<Agendamento[]> {
+    const linhas = await this.sql<Linha[]>`
+      SELECT ${this.colunas()}
+      FROM agendamentos
+      WHERE profissional_id = ${profissionalId}
+        AND cancelado_em IS NULL
+        AND upper(periodo) > now()
+      ORDER BY lower(periodo)
+      LIMIT ${limite}`;
+    return linhas.map(paraJson);
+  }
+
   async criar(novo: NovoAgendamento, usuarioId: number): Promise<Agendamento> {
     return this.sql.begin(async (tx) => {
       const [linha] = await capturar(

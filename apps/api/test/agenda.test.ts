@@ -132,6 +132,34 @@ describe("rotas de agenda", () => {
     })).statusCode).toBe(404);
   });
 
+  it("lista os próximos agendamentos do profissional, em ordem, sem passados nem cancelados", async () => {
+    const futuro = (hhmm: string, dia: string) => criar(H(hhmm, dia), H(hhmm.replace(":00", ":30"), dia));
+    await futuro("14:00", "2031-03-12");
+    await futuro("09:00", "2031-03-10");
+    await futuro("11:00", "2031-03-11");
+    await futuro("08:00", "2031-03-14");
+    await futuro("16:00", "2031-03-10");
+    await futuro("10:00", "2031-03-13");
+    const cancelado = await futuro("07:00", "2031-03-10");
+    await app.inject({ method: "DELETE", url: `/api/agendamentos/${cancelado.json().id}`, cookies });
+    await criar(H("09:00", "2020-01-06"), H("09:30", "2020-01-06"));
+
+    const res = await app.inject({ method: "GET", url: `/api/agenda/proximos?profissional=${profissionalId}`, cookies });
+    expect(res.statusCode).toBe(200);
+    const inicios = res.json().map((a: { inicio: string }) => a.inicio);
+    expect(inicios).toEqual([
+      H("09:00", "2031-03-10"), H("16:00", "2031-03-10"), H("11:00", "2031-03-11"),
+      H("14:00", "2031-03-12"), H("10:00", "2031-03-13"),
+    ]);
+
+    const dois = await app.inject({ method: "GET", url: `/api/agenda/proximos?profissional=${profissionalId}&limite=2`, cookies });
+    expect(dois.json()).toHaveLength(2);
+
+    const [{ id: outro }] = await sql<{ id: number }[]>`INSERT INTO profissionais (nome) VALUES ('Dr. Outro') RETURNING id`;
+    const vazio = await app.inject({ method: "GET", url: `/api/agenda/proximos?profissional=${outro}`, cookies });
+    expect(vazio.json()).toEqual([]);
+  });
+
   it("registra o histórico de quem fez o quê", async () => {
     const a = (await criar(H("13:00"), H("13:30"))).json<{ id: number }>();
     await app.inject({

@@ -77,8 +77,10 @@ Um monorepo simples com `npm workspaces`, sem Turborepo ou Nx.
 Uma tela de login e uma tela de agenda: seletor de profissional, navegação
 por data com calendário, grade de horários, criar (botão de novo
 agendamento), mover (editar o horário no painel do agendamento), cancelar,
-observação por agendamento. Sem visão semanal, sem
-busca de paciente, sem arrastar e soltar, sem tema escuro.
+observação por agendamento e, na seta ao lado do profissional, a lista dos
+próximos cinco agendamentos dele (`GET /api/agenda/proximos`), que ao clique
+leva ao dia e abre o agendamento. Sem visão semanal, sem busca de paciente,
+sem arrastar e soltar, sem tema escuro.
 
 ## Testes
 
@@ -97,5 +99,7 @@ busca de paciente, sem arrastar e soltar, sem tema escuro.
 
 - CDN para o front quando ele crescer ou tiver time próprio.
 - Visão semanal da agenda.
+- Marcar no calendário os dias que já têm agendamento, para achar os dias
+  com movimento sem abrir um por um.
 - Mover agendamento arrastando na grade.
 - Pacote compartilhado de tipos entre front e API.

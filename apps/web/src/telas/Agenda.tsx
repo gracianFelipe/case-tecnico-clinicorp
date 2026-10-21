@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { api, type Agendamento, type Profissional, type Usuario } from "../api";
-import { hojeISO } from "../datas";
+import { hojeISO, localISO } from "../datas";
 import { useAgenda } from "../hooks";
 import { Cabecalho } from "../componentes/Cabecalho";
 import { Grade } from "../componentes/Grade";
@@ -36,6 +36,10 @@ export function Agenda({ usuario, aoSair }: { usuario: Usuario; aoSair: () => Pr
         profissionais={profissionais}
         profissional={profissional}
         aoTrocarProfissional={setProfissional}
+        aoIrParaAgendamento={(item) => {
+          setData(localISO(new Date(item.inicio)));
+          setPainel({ modo: "editar", item });
+        }}
         data={data}
         aoTrocarData={setData}
         aoSair={deslogar}

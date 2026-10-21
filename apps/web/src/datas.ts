@@ -41,6 +41,10 @@ export function topoPx(isoInstante: string): number {
   return ((minutosDoDia(isoInstante) - HORA_INICIO * 60) * ALTURA_SLOT) / MINUTOS_SLOT;
 }
 
+export function rotuloCurto(isoInstante: string): string {
+  return new Date(isoInstante).toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit", month: "2-digit" });
+}
+
 export function rotuloData(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number) as [number, number, number];
   return new Date(y, m - 1, d).toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit", month: "short" });

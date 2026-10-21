@@ -37,6 +37,7 @@ export const api = {
     chamar<void>("/api/login", { method: "POST", body: JSON.stringify({ email, senha }) }),
   logout: () => chamar<void>("/api/logout", { method: "POST" }),
   profissionais: () => chamar<Profissional[]>("/api/profissionais"),
+  proximos: (profissional: number) => chamar<Agendamento[]>(`/api/agenda/proximos?profissional=${profissional}`),
   agenda: (profissional: number, data: string) =>
     chamar<Agendamento[]>(`/api/agenda?profissional=${profissional}&data=${data}`),
   criar: (dados: { profissionalId: number; paciente: string; inicio: string; fim: string; observacao?: string }) =>
