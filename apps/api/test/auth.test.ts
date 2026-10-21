@@ -96,3 +96,32 @@ describe("login, sessão e logout", () => {
     expect(ultimo).toBe(429);
   });
 });
+
+describe("limite de login atrás de proxy", () => {
+  let sql: ReturnType<typeof postgres>;
+  let app: App;
+
+  beforeAll(async () => {
+    sql = await prepararBancoDeTeste();
+    app = await construirApp({ sql, cookieSeguro: false, fuso: "America/Sao_Paulo", cabecalhoIp: "cf-connecting-ip" });
+  });
+  afterAll(async () => {
+    await app.close();
+    await sql.end();
+  });
+
+  const tentar = (ip: string) =>
+    app.inject({
+      method: "POST",
+      url: "/api/login",
+      headers: { "cf-connecting-ip": ip },
+      payload: { email: "ninguem@example.com", senha: "errada" },
+    });
+
+  it("conta as tentativas pelo IP informado pelo proxy, não pelo socket", async () => {
+    let ultimo = 0;
+    for (let i = 0; i < 11; i++) ultimo = (await tentar("203.0.113.7")).statusCode;
+    expect(ultimo).toBe(429);
+    expect((await tentar("203.0.113.8")).statusCode).toBe(401);
+  });
+});

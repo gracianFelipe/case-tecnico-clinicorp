@@ -15,3 +15,5 @@ services:
         value: America/Sao_Paulo
       - key: PROXIES_CONFIAVEIS
         value: "1"
+      - key: CABECALHO_IP_CLIENTE
+        value: cf-connecting-ip

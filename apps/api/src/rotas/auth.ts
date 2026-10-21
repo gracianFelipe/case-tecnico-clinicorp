@@ -1,4 +1,4 @@
-import type { FastifyInstance } from "fastify";
+import type { FastifyInstance, FastifyRequest } from "fastify";
 import rateLimit from "@fastify/rate-limit";
 import type { Sql } from "../db.js";
 import { verificarSenha } from "../auth/senha.js";
@@ -19,11 +19,21 @@ const loginSchema = {
 
 type LoginBody = { email: string; senha: string };
 
-export default async function rotasAuth(app: FastifyInstance, { sql, cookieSeguro }: { sql: Sql; cookieSeguro: boolean }) {
+function ipDoCliente(cabecalho: string | undefined) {
+  return (req: FastifyRequest) => {
+    const valor = cabecalho ? req.headers[cabecalho] : undefined;
+    return (typeof valor === "string" && valor) || req.ip;
+  };
+}
+
+export default async function rotasAuth(
+  app: FastifyInstance,
+  { sql, cookieSeguro, cabecalhoIp }: { sql: Sql; cookieSeguro: boolean; cabecalhoIp?: string | undefined },
+) {
   const nome = nomeCookie(cookieSeguro);
   const opcoes = opcoesCookie(cookieSeguro);
 
-  await app.register(rateLimit, { global: false });
+  await app.register(rateLimit, { global: false, keyGenerator: ipDoCliente(cabecalhoIp) });
 
   app.post<{ Body: LoginBody }>(
     "/api/login",
