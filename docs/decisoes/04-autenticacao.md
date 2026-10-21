@@ -46,7 +46,8 @@ pública (JWKS). Senha, reset, bloqueio por tentativas e MFA são do Google.
 ## Por que não Identity Platform
 
 1. **"Rodar localmente" é requisito.** Identity Platform exige projeto GCP,
-   chave de API e emulador para subir o projeto. É atrito exatamente no ponto que o README precisa facilitar. Sessão própria roda com
+   chave de API e emulador para subir o projeto. É atrito exatamente no
+   ponto que o README precisa facilitar. Sessão própria roda com
    `docker compose up`.
 2. **Mesma limitação com SSE.** O ID token é um JWT; o stream continuaria
    precisando de cookie ou token na URL.
@@ -88,3 +89,8 @@ criado_em)` dentro da mesma transação. Se der tempo, a interface mostra o
 histórico do item; se não, a tabela existe e fica anotada no README. Tracking
 de interface (cliques, tempo em tela) fica fora: não é problema de agenda.
 
+## O que eu faria depois
+
+- Login gerenciado (Identity Platform) com Microsoft e Google, 2FA e
+  reset de senha.
+- Papéis e permissões (recepção, profissional, administrador).

@@ -80,3 +80,22 @@ agendamento), mover (editar o horário no painel do agendamento), cancelar,
 observação por agendamento. Sem visão semanal, sem
 busca de paciente, sem arrastar e soltar, sem tema escuro.
 
+## Testes
+
+- **Componentes** com Vitest, jsdom e Testing Library, em `apps/web/test`.
+  Testam o que tem lógica: o seletor de hora (passos de 30 min, horários
+  ocupados riscados, fim só depois do início), o painel (sugestão de fim,
+  envio em ISO, recusa do servidor, mover e cancelar) e o login. A API é
+  substituída por um mock; o que importa aqui é a tela reagir certo.
+- **Ponta a ponta** com Playwright, em `apps/web/e2e`, contra o app real do
+  `docker compose`. O teste principal abre duas abas em contextos separados:
+  cria na primeira, espera o cartão aparecer na segunda sem recarregar, tenta
+  salvar o mesmo horário na segunda e confere a recusa. É o requisito 5 e a
+  regra de sobreposição testados do jeito que o usuário vê.
+
+## O que eu faria depois
+
+- CDN para o front quando ele crescer ou tiver time próprio.
+- Visão semanal da agenda.
+- Mover agendamento arrastando na grade.
+- Pacote compartilhado de tipos entre front e API.
