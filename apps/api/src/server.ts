@@ -11,6 +11,7 @@ const app = await construirApp({
   fuso: config.fuso,
   webDir: config.webDir,
   proxies: config.proxies,
+  cabecalhoIp: config.cabecalhoIp,
 });
 
 try {

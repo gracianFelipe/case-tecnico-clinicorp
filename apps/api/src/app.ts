@@ -16,6 +16,7 @@ export type Dependencias = {
   fuso: string;
   webDir?: string | undefined;
   proxies?: number;
+  cabecalhoIp?: string | undefined;
 };
 
 export async function construirApp(deps: Dependencias) {

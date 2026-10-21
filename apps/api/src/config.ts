@@ -17,6 +17,7 @@ export const config = {
   ambiente: opcional("NODE_ENV", "development"),
   fuso: opcional("FUSO_HORARIO", "America/Sao_Paulo"),
   proxies: Number(opcional("PROXIES_CONFIAVEIS", "0")),
+  cabecalhoIp: process.env.CABECALHO_IP_CLIENTE?.toLowerCase(),
   webDir: opcional("WEB_DIR", fileURLToPath(new URL("../../web/dist", import.meta.url))),
 } as const;
 
